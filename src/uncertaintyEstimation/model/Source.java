@@ -7,11 +7,12 @@ import javafx.beans.property.StringProperty;
  * Created by fykos on 19/11/15.
  */
 public class Source {
-    private final StringProperty source;
-    private final StringProperty type;
-    private final StringProperty condition;
-    private final StringProperty distribution;
-    private final StringProperty assumptions;
+    private String workflow;
+    private String source;
+    private String type;
+    private String condition;
+    private String distribution;
+    private String assumptions;
 
 
     /**
@@ -19,85 +20,77 @@ public class Source {
      * @param source
      * @param type
      */
-    public Source(String source, String type){
-        this.source = new SimpleStringProperty(source);
-        this.type = new SimpleStringProperty(type);
+    public Source(String workflow, String source, String type){
+        this.workflow = workflow;
+        this.source = source;
+        this.type = type;
 
-        this.condition = new SimpleStringProperty("some condition");
-        this.distribution = new SimpleStringProperty("some distributions");
-        this.assumptions = new SimpleStringProperty("many assumptions");
+        this.condition = "some condition";
+        this.distribution = "some distributions";
+        this.assumptions = "many assumptions";
     }
 
     /**
      * Default constructor
      */
     public Source(){
-        this(null, null);
+        this(null, null, null);
     }
 
     // Getters and setters for source field
     public String getSource(){
-        return source.get();
+        return source;
     }
 
     public void setSource(String source){
-        this.source.set(source);
-    }
-
-    public StringProperty sourceProperty(){
-        return source;
+        this.source = source;
     }
 
     // Getters and setters for type field
     public String getType(){
-        return type.get();
-    }
-
-    public void setType(String type){
-        this.type.set(type);
-    }
-
-    public StringProperty typeProperty(){
         return type;
     }
 
+    public void setType(String type){
+        this.type = type;
+    }
+
+
     // Getter and setter for condition
     public String getCondition(){
-        return condition.get();
+        return condition;
     }
 
     public void setCondition(String condition){
-        this.condition.set(condition);
-    }
-
-    public StringProperty conditionProperty(){
-        return condition;
+        this.condition = condition;
     }
 
     // Getter and setter for distribution
     public String getDistribution(){
-        return distribution.get();
-    }
-
-    public void setDistribution(String distribution){
-        this.distribution.set(distribution);
-    }
-
-    public StringProperty distributionProperty(){
         return distribution;
     }
 
+    public void setDistribution(String distribution){
+        this.distribution = distribution;
+    }
+
+
     // Getter and setter for assumptions
     public String getAssumptions(){
-        return assumptions.get();
+        return assumptions;
     }
 
     public void setAssumptions(String assumptions){
-        this.assumptions.set(assumptions);
+        this.assumptions = assumptions;
     }
 
-    public StringProperty assumptionsProperty(){
-        return  assumptions;
+    // Getter and setter for workflow
+    public String getWorkflow(){
+        return workflow;
+    }
+
+    public void setWorkflow(String workflow){
+        this.workflow = workflow;
     }
 
 

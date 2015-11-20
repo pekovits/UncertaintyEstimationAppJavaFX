@@ -5,8 +5,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="480.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="uncertaintyEstimation.view.UncertaintyInfoController">
    <children>
       <VBox layoutX="100.0" layoutY="41.0" prefHeight="450.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -47,21 +46,21 @@
                                           <Label text="Workflow:" GridPane.halignment="CENTER" />
                                           <Label text="Uncertainty Source:" GridPane.halignment="CENTER" GridPane.rowIndex="1" />
                                           <Label text="Uncertainty Type:" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
-                                          <Label text="Condition:" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
+                                          <Label text="Choice of Distribution:" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
                                           <Label text="Assumptions:" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
-                                          <TextField GridPane.columnIndex="1" GridPane.halignment="LEFT" />
-                                          <TextField GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
+                                          <TextField fx:id="workflowField" GridPane.columnIndex="1" GridPane.halignment="LEFT" />
+                                          <TextField fx:id="sourceField" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
                                           <HBox prefHeight="100.0" prefWidth="200.0" spacing="20.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                              <children>
-                                                <ComboBox prefHeight="25.0" prefWidth="185.0" />
-                                                <ComboBox prefHeight="25.0" prefWidth="185.0" />
+                                                <ComboBox fx:id="typeCombo" prefHeight="25.0" prefWidth="185.0" />
+                                                <ComboBox fx:id="conditionCombo" prefHeight="25.0" prefWidth="185.0" />
                                              </children>
                                              <padding>
                                                 <Insets bottom="8.0" top="14.0" />
                                              </padding>
                                           </HBox>
-                                          <TextField GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
-                                          <TextArea layoutY="10.0" prefHeight="127.0" prefWidth="409.0" GridPane.columnIndex="1" GridPane.rowIndex="4" GridPane.rowSpan="5">
+                                          <TextField fx:id="distributionField" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
+                                          <TextArea fx:id="assumptionField" layoutY="10.0" prefHeight="127.0" prefWidth="409.0" GridPane.columnIndex="1" GridPane.rowIndex="4" GridPane.rowSpan="5">
                                              <GridPane.margin>
                                                 <Insets />
                                              </GridPane.margin>
@@ -88,7 +87,7 @@
                                     </GridPane>
                                     <HBox alignment="BOTTOM_RIGHT" maxWidth="1.7976931348623157E308" prefHeight="448.0" prefWidth="605.0" spacing="10.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                        <children>
-                                          <Button mnemonicParsing="false" text="Add new source" />
+                                          <Button mnemonicParsing="false" onAction="#handleNewSourceButton" text="Add new source" />
                                           <Button mnemonicParsing="false" text="Add new workflow" />
                                           <Button mnemonicParsing="false" text="Finish" />
                                        </children>
