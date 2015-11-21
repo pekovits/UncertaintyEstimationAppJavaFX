@@ -4,6 +4,8 @@ package uncertaintyEstimation.view;
  * Created by fykos on 19/11/15.
  */
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -12,6 +14,8 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import uncertaintyEstimation.controller.Main;
 import uncertaintyEstimation.model.Source;
+
+import java.util.ArrayList;
 
 
 public class UncertaintyInfoController {
@@ -27,7 +31,7 @@ public class UncertaintyInfoController {
 
     private Stage infoStage;
     private Source source = new Source();
-
+    private TreeItem<String> parpar;
     private boolean newSourceClicked = false;
     private boolean newWorkflowClicked = false;
     private boolean finishClicked = false;
@@ -35,7 +39,7 @@ public class UncertaintyInfoController {
     private boolean workflow = false;
     private boolean tempWork = false;
     @FXML private TreeItem temp;
-
+    private String par;
     private Main mainapp = new Main();
     private ObservableList<String> comboData = FXCollections.observableArrayList();
     private ObservableList<String> condComboData = FXCollections.observableArrayList();
@@ -52,7 +56,40 @@ public class UncertaintyInfoController {
     private void initialize() {
         typeComboData();
         conditionComboData();
+        treeItemSelected();
     }
+
+    public void treeItemSelected(){
+        final ArrayList<String> arr = new ArrayList<String>();
+
+        tree.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue observableValue, Object o, Object t1) {
+                TreeItem<String> clickedItem = (TreeItem<String>) t1;
+                System.out.println("selected text: " + clickedItem.getChildren());
+                for(TreeItem<String> tr : clickedItem.getChildren()){
+                    parpar = tr.getParent();
+                    System.out.println("Parent: " + tr.getParent());
+                    System.out.println("Items " + tr.getValue());
+                    arr.add(tr.getValue());
+                }
+
+                setContent(parpar, arr);
+                arr.clear();
+            }
+        });
+    }
+
+    public void setContent(TreeItem<String> parent, ArrayList<String> ls){
+        System.out.println("index" + ls.get(1));
+        workflowField.setText(parent.getParent().getValue());
+        sourceField.setText(parent.getValue());
+        distributionField.setText(ls.get(2));
+        assumptionField.setText(ls.get(3));
+        conditionCombo.setValue(ls.get(1));
+        typeCombo.setValue(ls.get(0));
+    }
+
 
     public void typeComboData(){
         comboData.add("Aleatory");
