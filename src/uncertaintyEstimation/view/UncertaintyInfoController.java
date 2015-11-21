@@ -8,9 +8,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import uncertaintyEstimation.controller.Main;
 import uncertaintyEstimation.model.Source;
@@ -24,6 +22,9 @@ public class UncertaintyInfoController {
     @FXML private TextField distributionField;
     @FXML private TextArea assumptionField;
 
+    @FXML private TreeView tree;
+    @FXML private TreeItem treeItem;
+
     private Stage infoStage;
     private Source source = new Source();
 
@@ -31,9 +32,14 @@ public class UncertaintyInfoController {
     private boolean newWorkflowClicked = false;
     private boolean finishClicked = false;
 
+    private boolean workflow = false;
+    private boolean tempWork = false;
+    @FXML private TreeItem temp;
+
     private Main mainapp = new Main();
     private ObservableList<String> comboData = FXCollections.observableArrayList();
     private ObservableList<String> condComboData = FXCollections.observableArrayList();
+
     public UncertaintyInfoController(){
 
     }
@@ -78,16 +84,127 @@ public class UncertaintyInfoController {
     }
 
 
+    //Create branches
+    public TreeItem<String> makeBranch(String title, TreeItem<String> parent) {
+        TreeItem<String> item = new TreeItem<>(title);
+        item.setExpanded(true);
+        parent.getChildren().add(item);
+        return item;
+    }
+
+    /**
+     * This method takes the inputs from the user and adds them to the treeview
+     */
+    public void contentToTreeItems(){
+        TreeItem work ;
+        TreeItem parent = (TreeItem) tree.getSelectionModel().getSelectedItem();
+        if (parent==null) {
+            parent = tree.getRoot();
+        }
+
+
+
+        if (workflow){
+            treeItem = makeBranch(source.getSource(), temp);
+            makeBranch(source.getType(), treeItem);
+            makeBranch(source.getCondition(), treeItem);
+            makeBranch(source.getDistribution(), treeItem);
+            makeBranch(source.getAssumptions(), treeItem);
+            tree.setShowRoot(false);
+
+            System.out.println("The parent: " + treeItem.getParent().getValue());
+            System.out.println(parent.getChildren());
+
+            sourceField.setText("");
+            distributionField.setText("");
+            assumptionField.setText("");
+        }else{
+
+            work = makeBranch(source.getWorkflow(), parent);
+            treeItem = makeBranch(source.getSource(), work);
+            makeBranch(source.getType(), treeItem);
+            makeBranch(source.getCondition(), treeItem);
+            makeBranch(source.getDistribution(), treeItem);
+            makeBranch(source.getAssumptions(), treeItem);
+            tree.setShowRoot(false);
+
+            System.out.println("The parent: " + treeItem.getParent().getValue());
+            System.out.println(parent.getChildren());
+
+            sourceField.setText("");
+            distributionField.setText("");
+            assumptionField.setText("");
+
+            temp = treeItem.getParent();
+            workflow = true;
+
+        }
+
+    }
+
+    public void contentToTreeItemsWorkflowDifferent(){
+        TreeItem work;
+        TreeItem parent = (TreeItem) tree.getSelectionModel().getSelectedItem();
+        if (parent==null) {
+            parent = tree.getRoot();
+        }
+
+        if (workflow){
+            treeItem = makeBranch(source.getSource(), temp);
+            makeBranch(source.getType(), treeItem);
+            makeBranch(source.getCondition(), treeItem);
+            makeBranch(source.getDistribution(), treeItem);
+            makeBranch(source.getAssumptions(), treeItem);
+            tree.setShowRoot(false);
+
+            System.out.println("The parent: " + treeItem.getParent().getValue());
+            System.out.println(parent.getChildren());
+
+            workflowField.setText("");
+            sourceField.setText("");
+            distributionField.setText("");
+            assumptionField.setText("");
+
+            workflow = false;
+        }else{
+
+            work = makeBranch(source.getWorkflow(), parent);
+            treeItem = makeBranch(source.getSource(), work);
+            makeBranch(source.getType(), treeItem);
+            makeBranch(source.getCondition(), treeItem);
+            makeBranch(source.getDistribution(), treeItem);
+            makeBranch(source.getAssumptions(), treeItem);
+            tree.setShowRoot(false);
+
+            System.out.println("The parent: " + treeItem.getParent().getValue());
+            System.out.println(parent.getChildren());
+
+            workflowField.setText("");
+            sourceField.setText("");
+            distributionField.setText("");
+            assumptionField.setText("");
+
+            temp = treeItem.getParent();
+        }
+
+
+    }
+
+
+    @FXML
+    public void handleNewWorkfloButton(ActionEvent event){
+        setSourceContent();
+
+        contentToTreeItemsWorkflowDifferent();
+
+    }
+
 
     @FXML
     public void handleNewSourceButton(ActionEvent event){
         setSourceContent();
 
-        System.out.println(source.getWorkflow());
-        System.out.println(source.getSource());
-        System.out.println(source.getType());
-        System.out.println(source.getCondition());
-        System.out.println(source.getAssumptions());
+        contentToTreeItems();
 
     }
 

@@ -33,7 +33,11 @@
       </MenuBar>
    </top>
    <left>
-      <TreeView prefHeight="409.0" prefWidth="198.0" BorderPane.alignment="CENTER" />
+      <TreeView fx:id="tree" prefHeight="409.0" prefWidth="198.0" BorderPane.alignment="CENTER">
+          <root>
+              <TreeItem value="Progress" />
+          </root>
+      </TreeView>
    </left>
    <center>
       <VBox>
@@ -66,12 +70,15 @@
                         <TextField fx:id="sourceField" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="1" />
                         <HBox prefHeight="54.0" prefWidth="403.0" spacing="20.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <children>
-                              <ComboBox fx:id="typeCombo" prefHeight="25.0" prefWidth="185.0" />
+                              <ComboBox fx:id="typeCombo" prefHeight="40.0" prefWidth="185.0" />
                               <ComboBox fx:id="conditionCombo" prefHeight="25.0" prefWidth="185.0" />
                            </children>
                            <padding>
                               <Insets bottom="8.0" top="14.0" />
                            </padding>
+                           <GridPane.margin>
+                              <Insets bottom="8.0" right="8.0" top="8.0" />
+                           </GridPane.margin>
                         </HBox>
                         <TextField fx:id="distributionField" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
                         <TextArea fx:id="assumptionField" layoutY="10.0" prefHeight="127.0" prefWidth="409.0" GridPane.columnIndex="1" GridPane.rowIndex="4" GridPane.rowSpan="5">
@@ -92,7 +99,7 @@
             <HBox prefHeight="42.0" prefWidth="382.0" spacing="10.0" VBox.vgrow="ALWAYS">
                <children>
                   <Button mnemonicParsing="false" onAction="#handleNewSourceButton" text="Add new source" />
-                  <Button mnemonicParsing="false" text="Add new workflow" />
+                  <Button mnemonicParsing="false" onAction="#handleNewWorkfloButton" text="Add new workflow" />
                   <Button mnemonicParsing="false" text="Finish" />
                </children>
                <padding>

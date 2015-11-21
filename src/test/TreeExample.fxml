@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.control.TreeView?>
+<?import javafx.scene.control.TreeItem?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Button?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="test.TreeExampleController">
+    <center>
+        <TreeView fx:id="tree">
+            <root>
+                <TreeItem value="Root"/>
+            </root>
+        </TreeView>
+    </center>
+    <bottom>
+        <HBox>
+            <Button text="Add" onAction="#addNode" fx:id="addButton"/>
+            <Button text="Remove" onAction="#removeNode" fx:id="removeButton"/>
+        </HBox>
+    </bottom>
+</BorderPane>
