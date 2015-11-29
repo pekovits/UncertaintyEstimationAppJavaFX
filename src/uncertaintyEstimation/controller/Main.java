@@ -3,27 +3,25 @@ package uncertaintyEstimation.controller;/**
  */
 
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import uncertaintyEstimation.model.Source;
-import uncertaintyEstimation.view.UncertaintyInfoController;
 
 public class Main extends Application {
     private Source source;
+    private Stage primaryStage;
 
 
     @Override
-    public void start(Stage primaryStage){
+    public void start(Stage stage){
         try {
+            primaryStage = stage;
+            setStage(primaryStage);
             FXMLLoader loader = new FXMLLoader();
-            Parent root = loader.load(getClass().getResource("../view/main_window1.fxml"));
-            Scene scene = new Scene(root, 800, 470);
+            Parent root = loader.load(getClass().getResource("../view/welcome.fxml"));
+            Scene scene = new Scene(root, 500, 270);
             primaryStage.setTitle("Uncertainty Estimation");
             primaryStage.setScene(scene);
             primaryStage.show();
@@ -33,6 +31,14 @@ public class Main extends Application {
             System.out.println(e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    public Stage getStage(){
+        return primaryStage;
+    }
+
+    public void setStage(Stage primaryStage){
+        this.primaryStage = primaryStage;
     }
 
 

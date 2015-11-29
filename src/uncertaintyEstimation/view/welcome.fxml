@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<GridPane alignment="CENTER" hgap="10" prefHeight="255.0" prefWidth="415.0" styleClass="root" vgap="10" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="uncertaintyEstimation.controller.WelcomeController">
+   <padding><Insets bottom="10" left="25" right="25" top="25" /></padding>
+   <children>
+   
+      <Text id="welcome-text" text="Uncertainty Estimation Application" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="0" GridPane.rowSpan="2" />
+   
+      <Text fx:id="actiontarget" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+      <ImageView fitHeight="24.0" fitWidth="211.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="RIGHT" GridPane.rowIndex="2">
+         <image>
+            <Image preserveRatio="false" smooth="false" url="@../icons/add-document.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="24.0" fitWidth="211.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="RIGHT" GridPane.rowIndex="3">
+         <image>
+            <Image preserveRatio="false" smooth="false" url="@../icons/Data-Import-icon.png" />
+         </image>
+      </ImageView>
+      <Hyperlink fx:id="newReport" onAction="#handleNewReportLink" prefHeight="13.0" prefWidth="129.0" text="Create new report" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="2" />
+      <Hyperlink fx:id="existingReport" onAction="#handleExistingReportLink" text="Load existing report" GridPane.columnIndex="1" GridPane.halignment="LEFT" GridPane.rowIndex="3" />
+   </children>
+   
+   <columnConstraints>
+      <ColumnConstraints />
+      <ColumnConstraints />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints />
+      <RowConstraints minHeight="10.0" prefHeight="30.0" />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+      <RowConstraints />
+   </rowConstraints>
+
+</GridPane>
