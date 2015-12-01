@@ -10,7 +10,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.web.WebView;
+import javafx.stage.Stage;
 import org.w3c.dom.*;
 import uncertaintyEstimation.model.Source;
 
@@ -20,43 +23,47 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 
 public class UncertaintyInfoController {
-    @FXML
-    private TextField workflowField;
-    @FXML
-    private TextField sourceField;
-    @FXML
-    private ComboBox typeCombo;
-    @FXML
-    private ComboBox conditionCombo;
-    @FXML
-    private TextField distributionField;
-    @FXML
-    private TextArea assumptionField;
-    @FXML
-    private TreeView tree;
-    @FXML
-    private TreeItem treeItem;
-    @FXML
-    private TreeItem temp;
+    @FXML private TextField workflowField;
+    @FXML private TextField sourceField;
+    @FXML private ComboBox typeCombo;
+    @FXML private ComboBox conditionCombo;
+    @FXML private TextField distributionField;
+    @FXML private TextArea assumptionField;
+    @FXML private TreeItem rt = new TreeItem("Progress");
+    @FXML private TreeView tree = new TreeView(rt);
+    @FXML private TreeItem treeItem;
+    @FXML private TreeItem temp;
     @FXML private TreeItem temper = new TreeItem("");
 
     private Source source = new Source();
-    private TreeItem<String> parpar;
-    private boolean workflow = false;
+    private TreeItem<String> parent;
 
     private ObservableList<String> comboData = FXCollections.observableArrayList();
     private ObservableList<String> condComboData = FXCollections.observableArrayList();
 
-    private Element workElement;
+    private boolean workflow = false;
     private boolean firstdoc = false;
-    private boolean firstxmldoc = false;
+    private boolean treeClicked = false;
+    private Element workElement;
     private XmlBuild xml = new XmlBuild();
-    private boolean fill = false;
+    private WelcomeController contr;
+
+    private String tempWorkflow;
+    private String tempSource;
+    private String tempType;
+    private String tempCondition;
+    private String tempDistribution;
+    private String tempAssumption;
+
+
 
     /**
      * Default constructor
@@ -73,7 +80,7 @@ public class UncertaintyInfoController {
     private void initialize() {
         typeComboData();
         conditionComboData();
-//        populateTree();
+        // this method listens for selections in the treeview
         treeItemSelected();
     }
 
@@ -90,20 +97,26 @@ public class UncertaintyInfoController {
             @Override
             public void changed(ObservableValue observableValue, Object o, Object t1) {
                 TreeItem<String> clickedItem = (TreeItem<String>) t1;
-                System.out.println("selected text: " + clickedItem.getChildren());
                 for (TreeItem<String> tr : clickedItem.getChildren()) {
-                    parpar = tr.getParent();
+
+                    parent = tr.getParent();
                     arr.add(tr.getValue());
-
-                    System.out.println("Parent: " + tr.getParent());
-                    System.out.println("Items " + tr.getValue());
-
                 }
 
-                treeItemToTextField(parpar, arr);
+                // shows the treeitems to the textfields
+                treeItemToTextField(parent, arr);
 
                 // delete all the elements from the arraylist for the next elements
                 arr.clear();
+
+                tempWorkflow = workflowField.getText();
+                tempSource = sourceField.getText();
+                tempType = (String) typeCombo.getValue();
+                tempCondition = (String) conditionCombo.getValue();
+                tempDistribution = distributionField.getText();
+                tempAssumption = assumptionField.getText();
+
+                treeClicked = true;
             }
         });
     }
@@ -117,7 +130,6 @@ public class UncertaintyInfoController {
      * @param ls
      */
     public void treeItemToTextField(TreeItem<String> parent, ArrayList<String> ls) {
-        System.out.println("index" + ls.get(1));
         workflowField.setText(parent.getParent().getValue());
         sourceField.setText(parent.getValue());
         distributionField.setText(ls.get(2));
@@ -153,10 +165,18 @@ public class UncertaintyInfoController {
     }
 
 
-    public void populateTree(){
+
+    /**
+     * This method reads the xml file, parses it and adds the nodes to the
+     * treeview
+     *
+     * This method gets called when the main window is loaded.
+     */
+    public void populateTree(String filename){
+        System.out.println("Inside populateTree");
         try {
 
-            File fXmlFile = new File("xmltest.xml");
+            File fXmlFile = new File(filename);
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(fXmlFile);
@@ -166,10 +186,10 @@ public class UncertaintyInfoController {
 
             NodeList nList = doc.getElementsByTagName("workflow");
 
-            System.out.println("----------------------------");
             TreeItem parent = (TreeItem) tree.getSelectionModel().getSelectedItem();
             if (parent == null) {
                 parent = tree.getRoot();
+                System.out.println("Parent: " + parent);
             }
 
             for (int temp = 0; temp < nList.getLength(); temp++) {
@@ -200,31 +220,7 @@ public class UncertaintyInfoController {
                         tree.setShowRoot(false);
 
                         temper = treeItem.getParent();
-                        System.out.println("Temper: " + temper);
-//                        fill = true;
                     }
-
-//                    if (fill) {
-//                        treeItem = makeBranch(eElement.getElementsByTagName("source").item(0).getTextContent(), temper);
-//                        makeBranch(eElement.getElementsByTagName("type").item(0).getTextContent(), treeItem);
-//                        makeBranch(eElement.getElementsByTagName("condition").item(0).getTextContent(), treeItem);
-//                        makeBranch(eElement.getElementsByTagName("distribution").item(0).getTextContent(), treeItem);
-//                        makeBranch(eElement.getElementsByTagName("assumptions").item(0).getTextContent(), treeItem);
-//                        tree.setShowRoot(false);
-//                    } else {
-//                        TreeItem workflow;
-//                        workflow = makeBranch(eElement.getAttribute("name"), parent);
-//                        treeItem = makeBranch(eElement.getElementsByTagName("source").item(0).getTextContent(), workflow);
-//                        makeBranch(eElement.getElementsByTagName("type").item(0).getTextContent(), treeItem);
-//                        makeBranch(eElement.getElementsByTagName("condition").item(0).getTextContent(), treeItem);
-//                        makeBranch(eElement.getElementsByTagName("distribution").item(0).getTextContent(), treeItem);
-//                        makeBranch(eElement.getElementsByTagName("assumptions").item(0).getTextContent(), treeItem);
-//                        tree.setShowRoot(false);
-//
-//                        temper = treeItem.getParent();
-//                        System.out.println("Temper: " + temper);
-//                        fill = true;
-//                    }
                 }
             }
         } catch (Exception e) {
@@ -244,7 +240,6 @@ public class UncertaintyInfoController {
         source.setCondition((String) conditionCombo.getValue());
         source.setDistribution(distributionField.getText());
         source.setAssumptions(assumptionField.getText());
-
     }
 
 
@@ -260,6 +255,7 @@ public class UncertaintyInfoController {
         TreeItem<String> item = new TreeItem<>(title);
         parent.getChildren().add(item);
         item.setExpanded(true);
+
         return item;
     }
 
@@ -274,8 +270,8 @@ public class UncertaintyInfoController {
         tree.setShowRoot(false);
     }
 
-    public void sourceTreeItem() {
-        treeItem = makeBranch(source.getSource(), temp);
+    public void sourceTreeItem(TreeItem temporary) {
+        treeItem = makeBranch(source.getSource(), temporary);
         makeBranch(source.getType(), treeItem);
         makeBranch(source.getCondition(), treeItem);
         makeBranch(source.getDistribution(), treeItem);
@@ -284,7 +280,9 @@ public class UncertaintyInfoController {
     }
 
     /**
-     * This method takes the inputs from the user and adds them to the treeview
+     * This method takes the inputs from the user and adds them to the treeview if the new source button is pressed.
+     * This method is responsible for writing the new workflow and source. It also writes the other
+     * sources that belong to the current workflow.
      */
     public void contentToTreeItems() {
         TreeItem parent = (TreeItem) tree.getSelectionModel().getSelectedItem();
@@ -294,11 +292,13 @@ public class UncertaintyInfoController {
 
         System.out.println("Workflow in contentToTreeItems: " + workflow);
         if (workflow) {
-            sourceTreeItem();
+            // writes the sources that belong to the workflow
+            sourceTreeItem(temp);
             sourceField.setText("");
             distributionField.setText("");
             assumptionField.setText("");
         } else {
+            // writes workflow and source
             workflowTreeItem(parent);
             sourceField.setText("");
             distributionField.setText("");
@@ -309,27 +309,35 @@ public class UncertaintyInfoController {
             workflow = true;
         }
 
-        Document doc = docsCreated();
+        // write content to the xml file
+        Document doc = xml.docsCreated();
         Element work = workflowToXML(doc);
         if (firstdoc) {
             xml.addWorkflowNode(work);
         } else {
-            writeXML(doc, work);
+            xml.writeXML(doc, work);
             firstdoc = true;
         }
     }
 
 
+    /**
+     * This method writes the contents from the textfields to the
+     * treeviews if the new workflow button is pressed.
+     * This method is responsible for adding the last source of a workflow
+     * and the first source of a new workflow.
+     */
     public void contentToTreeItemsWorkflowDifferent() {
-
         TreeItem parent = (TreeItem) tree.getSelectionModel().getSelectedItem();
         if (parent == null) {
             parent = tree.getRoot();
         }
 
-        System.out.println("Workflow in contentToTreeItemsWorkflowDifferent: " + workflow);
         if (workflow) {
-            sourceTreeItem();
+            // writes the last source of a workflow if workflow button is pressed
+            sourceTreeItem(temp);
+
+            // clear textfields for next input
             workflowField.setText("");
             sourceField.setText("");
             distributionField.setText("");
@@ -338,7 +346,10 @@ public class UncertaintyInfoController {
             workflow = false;
 
         } else {
+            // writes the new workflow and source if the new workflow button is pressed.
             workflowTreeItem(parent);
+
+            // clear textfields for next input
             workflowField.setText("");
             sourceField.setText("");
             distributionField.setText("");
@@ -347,45 +358,18 @@ public class UncertaintyInfoController {
             temp = treeItem.getParent();
         }
 
-        Document doc = docsCreated();
+        // write content to the xml file
+        Document doc = xml.docsCreated();
         Element work = workflowToXML(doc);
         xml.addWorkflowNode(work);
     }
 
-    public Element sourceToXML(Document doc) {
-        Element sourceElement = null;
-        try {
 
-            sourceElement = doc.createElement("source");
-
-            Element workName = doc.createElement("name");
-            workName.appendChild(doc.createTextNode(source.getSource()));
-            sourceElement.appendChild(workName);
-
-            Element carname = doc.createElement("type");
-            carname.appendChild(doc.createTextNode(source.getType()));
-            sourceElement.appendChild(carname);
-
-            Element carname1 = doc.createElement("condition");
-            carname1.appendChild(doc.createTextNode(source.getCondition()));
-            sourceElement.appendChild(carname1);
-
-            Element cond = doc.createElement("distribution");
-            cond.appendChild(doc.createTextNode(source.getDistribution()));
-            sourceElement.appendChild(cond);
-
-            Element distr = doc.createElement("assumptions");
-            distr.appendChild(doc.createTextNode(source.getAssumptions()));
-            sourceElement.appendChild(distr);
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
-
-        return sourceElement;
-    }
-
+    /**
+     * This method creates the workflow and source nodes in the xml file
+     * @param doc
+     * @return
+     */
     public Element workflowToXML(Document doc) {
 
         try {
@@ -394,9 +378,6 @@ public class UncertaintyInfoController {
             Attr attr = doc.createAttribute("name");
             attr.setValue(source.getWorkflow());
             workElement.setAttributeNode(attr);
-
-//            Element sourceElement = doc.createElement("source");
-//            workElement.appendChild(sourceElement);
 
             Element workName = doc.createElement("source");
             workName.appendChild(doc.createTextNode(source.getSource()));
@@ -417,60 +398,12 @@ public class UncertaintyInfoController {
             Element distr = doc.createElement("assumptions");
             distr.appendChild(doc.createTextNode(source.getAssumptions()));
             workElement.appendChild(distr);
-
-
         } catch (Exception e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
         }
 
         return workElement;
-    }
-
-    public void writeXML(Document doc, Element workElem) {
-        try {
-
-            // root element
-            Element rootElement = doc.createElement("application");
-            doc.appendChild(rootElement);
-
-            rootElement.appendChild(workElem);
-
-            // write the content into xml file
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            Transformer transformer = transformerFactory.newTransformer();
-            DOMSource source = new DOMSource(doc);
-            StreamResult result = new StreamResult(new File("xmltest.xml"));
-            transformer.transform(source, result);
-
-            // Output to console for testing
-            StreamResult consoleResult = new StreamResult(System.out);
-            transformer.transform(source, consoleResult);
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    public Document docsCreated() {
-        Document doc = null;
-        try {
-            File file = new File("xmltest.xml");
-            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-
-            if (file.exists()) {
-                doc = dBuilder.parse(file);
-            } else {
-                doc = dBuilder.newDocument();
-            }
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
-
-        return doc;
     }
 
 
@@ -481,10 +414,57 @@ public class UncertaintyInfoController {
 
     }
 
+    @FXML
+    public void handlePreview() {
+
+        Stage primaryStage = new Stage();
+        try {
+            TransformerFactory tFactory = TransformerFactory.newInstance();
+
+            javax.xml.transform.Source xslDoc = new StreamSource("report.xsl");
+            javax.xml.transform.Source xmlDoc = new StreamSource("xmltest.xml");
+
+            String outputFileName = "test.html";
+            OutputStream htmlFile = new FileOutputStream(outputFileName);
+
+            Transformer transformer = tFactory.newTransformer(xslDoc);
+            transformer.transform(xmlDoc, new StreamResult(htmlFile));
+
+//            primaryStage.setTitle("java-buddy.blogspot.com");
+
+            WebView webView = new WebView();
+            String filename = "test.html";
+            final java.net.URI uri = java.nio.file.Paths.get(filename).toAbsolutePath().toUri();
+            webView.getEngine().load(uri.toString());
+
+            Scene scene = new Scene(webView, 400, 400);
+            primaryStage.setScene(scene);
+            primaryStage.show();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
 
     @FXML
     public void handleNewSourceButton(ActionEvent event) {
         setSourceContent();
+
+        if(treeClicked){
+            if (!tempWorkflow.equalsIgnoreCase(source.getWorkflow())){
+                System.out.println("New workflow: " + source.getWorkflow());
+            }
+
+            if (!tempSource.equalsIgnoreCase(source.getSource())){
+                System.out.println("New source: " + source.getSource());
+            }
+
+        }else{
+            System.out.println("Tree not clicked");
+        }
+
+
         contentToTreeItems();
     }
 

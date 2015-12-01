@@ -17,28 +17,25 @@ import java.io.File;
  * Created by fykos on 26/11/15.
  */
 public class XmlBuild {
-    private Element workElement;
-    boolean firstdoc = false;
-    boolean firstxmldoc = false;
-
-    @FXML private TextField workflowField;
-    @FXML private TextField sourceField;
-    @FXML private ComboBox typeCombo;
-    @FXML private ComboBox conditionCombo;
-    @FXML private TextField distributionField;
-    @FXML private TextArea assumptionField;
-    @FXML private TreeView tree;
-    @FXML private TreeItem treeItem;
-    @FXML private TreeItem temp;
-
+    private Element workElement = null;
     private Source source = new Source();
-    private TreeItem<String> parpar;
-    private boolean workflow = false;
 
+
+    /**
+     * Default constructor
+     */
     public XmlBuild(){
 
     }
 
+
+    /**
+     * This method takes as parameters an xml document and an element
+     * that represents the workflow with the source and appends it to the
+     * root element of the xml.
+     * @param doc
+     * @param workElem
+     */
     public void writeXML(Document doc, Element workElem){
         try {
 
@@ -64,6 +61,12 @@ public class XmlBuild {
         }
     }
 
+
+    /**
+     * This method takes as parameter an element that represents the source
+     * and appends it to the parent of the node.
+     * @param sourceNode
+     */
     public void addWorkflowNode(Element sourceNode){
         try {
             File file = new File("xmltest.xml");
@@ -71,17 +74,16 @@ public class XmlBuild {
             DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
             Document document = documentBuilder.parse(file);
 
-
             Element root = document.getDocumentElement();
             Node nd = document.getDocumentElement();
-
-
             nd.appendChild(document.importNode(sourceNode, true));
 
+            // the following lines write the content to an xml file
             DOMSource source = new DOMSource(document);
-
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             Transformer transformer = transformerFactory.newTransformer();
+
+            // Outputs to console for testing
             StreamResult result = new StreamResult("xmltest.xml");
             transformer.transform(source, result);
 
@@ -120,8 +122,12 @@ public class XmlBuild {
         }
     }
 
+    /**
+     * This method creates the workflow and source nodes in the xml file
+     * @param doc
+     * @return
+     */
     public Element workflowToXML(Document doc){
-
         try {
             workElement = doc.createElement("workflow");
 
@@ -129,28 +135,25 @@ public class XmlBuild {
             attr.setValue(source.getWorkflow());
             workElement.setAttributeNode(attr);
 
-            Element sourceElement = doc.createElement("source");
-            workElement.appendChild(sourceElement);
-
-            Element workName = doc.createElement("name");
+            Element workName = doc.createElement("source");
             workName.appendChild(doc.createTextNode(source.getSource()));
-            sourceElement.appendChild(workName);
+            workElement.appendChild(workName);
 
             Element carname = doc.createElement("type");
             carname.appendChild(doc.createTextNode(source.getType()));
-            sourceElement.appendChild(carname);
+            workElement.appendChild(carname);
 
             Element carname1 = doc.createElement("condition");
             carname1.appendChild(doc.createTextNode(source.getCondition()));
-            sourceElement.appendChild(carname1);
+            workElement.appendChild(carname1);
 
             Element cond = doc.createElement("distribution");
             cond.appendChild(doc.createTextNode(source.getDistribution()));
-            sourceElement.appendChild(cond);
+            workElement.appendChild(cond);
 
             Element distr = doc.createElement("assumptions");
             distr.appendChild(doc.createTextNode(source.getAssumptions()));
-            sourceElement.appendChild(distr);
+            workElement.appendChild(distr);
 
 
         }catch (Exception e){
@@ -158,9 +161,16 @@ public class XmlBuild {
             e.printStackTrace();
         }
 
+        System.out.println("xml work:" + workElement);
         return workElement;
     }
 
+
+    /**
+     * This method writes the source node to the xml
+     * @param doc
+     * @return
+     */
     public Element sourceToXML(Document doc){
         Element sourceElement = null;
         try {
@@ -214,34 +224,6 @@ public class XmlBuild {
         return name;
     }
 
-    public void writeNewWorkflow(){
-        try {
-            File file = new File("xmltest.xml");
-            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-            Document document = documentBuilder.parse(file);
-
-            Element rootElement = document.createElement("application");
-            document.appendChild(rootElement);
-
-            Node nd = document.getDocumentElement().getFirstChild();
-            System.out.println("Node: " + nd.getNodeName());
-            Element work = workflowToXML(document);
-
-            nd.appendChild(document.importNode(work, true));
-
-            DOMSource source = new DOMSource(document);
-
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            Transformer transformer = transformerFactory.newTransformer();
-            StreamResult result = new StreamResult("xmltest.xml");
-            transformer.transform(source, result);
-
-        }catch(Exception e){
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
-    }
 
 
     public Document docsCreated(){
