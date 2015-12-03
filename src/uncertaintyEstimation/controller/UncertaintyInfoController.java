@@ -92,16 +92,26 @@ public class UncertaintyInfoController {
      */
     public void treeItemSelected() {
         final ArrayList<String> arr = new ArrayList<String>();
+        final ArrayList<TreeItem> treeArr = new ArrayList<TreeItem>();
 
         tree.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue observableValue, Object o, Object t1) {
                 TreeItem<String> clickedItem = (TreeItem<String>) t1;
-                for (TreeItem<String> tr : clickedItem.getChildren()) {
 
+                System.out.println("Clicked item: " + t1);
+
+                for (TreeItem<String> tr : clickedItem.getChildren()) {
+                    System.out.println("Child: " + tr);
                     parent = tr.getParent();
                     arr.add(tr.getValue());
+
+                    treeArr.add(tr);
                 }
+
+                collectTreeItems(clickedItem, treeArr);
+
+                System.out.println("Parent: " + tree.getRow(parent));
 
                 // shows the treeitems to the textfields
                 treeItemToTextField(parent, arr);
@@ -119,6 +129,11 @@ public class UncertaintyInfoController {
                 treeClicked = true;
             }
         });
+    }
+
+
+    public void collectTreeItems(TreeItem par, ArrayList<TreeItem> arr){
+
     }
 
 
@@ -333,6 +348,7 @@ public class UncertaintyInfoController {
             parent = tree.getRoot();
         }
 
+
         if (workflow) {
             // writes the last source of a workflow if workflow button is pressed
             sourceTreeItem(temp);
@@ -344,7 +360,6 @@ public class UncertaintyInfoController {
             assumptionField.setText("");
 
             workflow = false;
-
         } else {
             // writes the new workflow and source if the new workflow button is pressed.
             workflowTreeItem(parent);
@@ -378,6 +393,10 @@ public class UncertaintyInfoController {
             Attr attr = doc.createAttribute("name");
             attr.setValue(source.getWorkflow());
             workElement.setAttributeNode(attr);
+
+            Element workflowName = doc.createElement("name");
+            workflowName.appendChild(doc.createTextNode(source.getWorkflow()));
+            workElement.appendChild(workflowName);
 
             Element workName = doc.createElement("source");
             workName.appendChild(doc.createTextNode(source.getSource()));
@@ -421,7 +440,7 @@ public class UncertaintyInfoController {
         try {
             TransformerFactory tFactory = TransformerFactory.newInstance();
 
-            javax.xml.transform.Source xslDoc = new StreamSource("report.xsl");
+            javax.xml.transform.Source xslDoc = new StreamSource("example.xsl");
             javax.xml.transform.Source xmlDoc = new StreamSource("xmltest.xml");
 
             String outputFileName = "test.html";
@@ -429,8 +448,6 @@ public class UncertaintyInfoController {
 
             Transformer transformer = tFactory.newTransformer(xslDoc);
             transformer.transform(xmlDoc, new StreamResult(htmlFile));
-
-//            primaryStage.setTitle("java-buddy.blogspot.com");
 
             WebView webView = new WebView();
             String filename = "test.html";
@@ -452,6 +469,7 @@ public class UncertaintyInfoController {
         setSourceContent();
 
         if(treeClicked){
+
             if (!tempWorkflow.equalsIgnoreCase(source.getWorkflow())){
                 System.out.println("New workflow: " + source.getWorkflow());
             }

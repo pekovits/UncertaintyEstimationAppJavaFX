@@ -31,7 +31,7 @@ public class JavaFX_Browser extends Application {
         primaryStage.setTitle("java-buddy.blogspot.com");
 
         WebView webView = new WebView();
-        String filename = "test.html";
+        String filename = "test_cr.html";
         final java.net.URI uri = java.nio.file.Paths.get(filename).toAbsolutePath().toUri();
         webView.getEngine().load(uri.toString());
 

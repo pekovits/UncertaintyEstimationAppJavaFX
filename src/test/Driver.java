@@ -20,10 +20,10 @@ public class Driver {
         {
             TransformerFactory tFactory = TransformerFactory.newInstance();
 
-            Source xslDoc = new StreamSource("report.xsl");
+            Source xslDoc = new StreamSource("example.xsl");
             Source xmlDoc = new StreamSource("xmltest.xml");
 
-            String outputFileName = "test.html";
+            String outputFileName = "test_cr.html";
             OutputStream htmlFile = new FileOutputStream(outputFileName);
 
             Transformer transformer = tFactory.newTransformer(xslDoc);
